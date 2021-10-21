@@ -1,29 +1,21 @@
+# Create ec2 instace on AWS
 resource "aws_instance" "Challenge2021" {
    ami = "${var.ami}"
    instance_type = "${var.instancetype}"
    subnet_id = "${var.subnet_1a}"
    vpc_security_group_ids = ["${aws_security_group.ec2-sg.id}"]
-   user_data = <<-EOF
-   #!/bin/bash
-yum update -y
-amazon-linux-extras install nginx1.12
-nginx -v
-systemctl start nginx
-systemctl enable nginx
-chmod 2775 /usr/share/nginx/html
-find /usr/share/nginx/html -type d -exec chmod 2775 {} \;
-find /usr/share/nginx/html -type f -exec chmod 0664 {} \;
-EOF
-
+   user_data = "${file("nginx-install.sh")}"
   tags = {
      Name = "${var.dev}.${var.ops}"
    }
  }
 
+# This is to create a security group
 resource "aws_security_group" "ec2-sg" {
   name   = "${var.dev}.${var.ops}-sg"
   vpc_id = "vpc-db83f6b0"
 
+# This is to open port 80
   ingress {
     from_port   = 80
     to_port     = 80
