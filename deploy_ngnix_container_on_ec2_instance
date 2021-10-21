@@ -3,7 +3,7 @@ resource "aws_instance" "Challenge2021" {
    instance_type          = "${var.instancetype}"
    subnet_id              = "${var.subnet_1a}"
    vpc_security_group_ids = ["${aws_security_group.ec2-sg.id}"]
-   tags = {
+   tags      = {
       Name   = "${var.dev}.${var.ops}"
     }
    user_data = "${file("nginx-container.sh")}"
